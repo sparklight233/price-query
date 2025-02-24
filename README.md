@@ -56,7 +56,7 @@ docker run -d \
 
 
 ### 1. 获取 excel 文件
-1. 来到雷总的[频道](https://t.me/masta_ee)，以html格式导出数据
+1. 找到卖龟的tg频道，以html格式导出数据
 2. 打开导出数据的文件夹，安装依赖，并运行下面的py文件
 
 ```
@@ -169,7 +169,7 @@ docker run -d \
 
 ### 数据来源
 
-来自雷总的[频道](https://t.me/masta_ee)
+雷总的[频道](https://t.me/masta_ee)
 
 ### 本地编译
 
