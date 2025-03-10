@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>地区价格查询系统</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>地区价格查询系统</h1>
+        </header>
+
+        <div class="search-container">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="输入地区关键词">
+                <button onclick="searchLocation()" class="primary-btn">搜索</button>
+            </div>
+            <div class="filter-container">
+                <div class="price-filter">
+                    <input type="number" id="minPrice" placeholder="最低价格">
+                    <input type="number" id="maxPrice" placeholder="最高价格">
+                </div>
+                <div class="date-filter">
+                    <input type="date" id="startDate">
+                    <input type="date" id="endDate">
+                </div>
+                <button onclick="searchLocation()" class="secondary-btn">应用筛选</button>
+                <button onclick="resetFilters()" class="secondary-btn">重置</button>
+            </div>
+            <div class="stats" id="searchStats"></div>
+        </div>
+
+        <div class="table-container">
+            <table id="resultTable">
+                <thead>
+                    <tr>
+                        <th onclick="sortTable('地区')">地区 ↕</th>
+                        <th onclick="sortTable('价格')">价格(￥) ↕</th>
+                        <th onclick="sortTable('账号时间')">账号时间(天) ↕</th>
+                        <th onclick="sortTable('出售日期')">出售日期 ↕</th>
+                        <th>备注</th>
+                    </tr>
+                </thead>
+                <tbody id="resultBody"></tbody>
+            </table>
+        </div>
+
+        <div class="pagination" id="pagination"></div>
+    </div>
+
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
+</body>
+</html>
