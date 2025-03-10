@@ -122,10 +122,10 @@ export default {
   data() {
     return {
       searchInput: '',
-      minPrice: '100',
-      maxPrice: '600',
-      minTime: '100',  // 添加最小账号时间
-      maxTime: '600',  // 添加最大账号时间
+      minPrice: '',
+      maxPrice: '',
+      minTime: '',  // 添加最小账号时间
+      maxTime: '',  // 添加最大账号时间
       dateRange: [],
       startDateValue: '',
       endDateValue: '',

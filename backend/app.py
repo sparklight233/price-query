@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, send_from_directory
 import pandas as pd
 import os
 import logging
@@ -15,7 +15,9 @@ logger = logging.getLogger(__name__)
 data_dir = os.path.join(os.path.dirname(__file__), 'data')
 os.makedirs(data_dir, exist_ok=True)
 
-app = Flask(__name__)
+app = Flask(__name__, 
+            static_folder='../dist',
+            static_url_path='')
 
 def load_data():
     try:
@@ -69,7 +71,30 @@ def load_data():
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    # 使用send_static_file而不是render_template
+    return app.send_static_file('index.html')
+
+# 添加处理前端路由的函数
+@app.route('/<path:path>')
+def serve_static(path):
+    try:
+        # 确保path不为None
+        if path is None:
+            logger.warning("路径为None，返回index.html")
+            return app.send_static_file('index.html')
+            
+        # 确保static_folder不为None
+        static_folder = app.static_folder or ''
+        
+        static_path = os.path.join(static_folder, path)
+        if os.path.exists(static_path) and os.path.isfile(static_path):
+            return send_from_directory(static_folder, path)
+        else:
+            logger.info(f"路径不存在或不是文件，返回index.html: {path}")
+            return app.send_static_file('index.html')
+    except Exception as e:
+        logger.error(f"提供静态文件时出错: {str(e)}")
+        return app.send_static_file('index.html')
 
 @app.route('/api/data')
 def get_data():

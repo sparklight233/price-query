@@ -176,10 +176,10 @@ export default {
   data() {
     return {
       searchInput: '',
-      minPrice: '100',
-      maxPrice: '600',
-      minTime: '100',
-      maxTime: '600',
+      minPrice: '',
+      maxPrice: '',
+      minTime: '',
+      maxTime: '',
       dateRange: [],
       startDateValue: '',
       endDateValue: '',
@@ -241,10 +241,10 @@ export default {
     },
     resetFilters() {
       this.searchInput = '';
-      this.minPrice = '100';
-      this.maxPrice = '600';
-      this.minTime = '100';
-      this.maxTime = '600';
+      this.minPrice = '';
+      this.maxPrice = '';
+      this.minTime = '';
+      this.maxTime = '';
       this.initializeDateInputs();
       
       this.filteredData = [...this.allData];

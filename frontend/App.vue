@@ -24,7 +24,7 @@
 <script>
 import { Money, Operation } from '@element-plus/icons-vue'
 import OldLayout from './AppOld.vue'
-import NewLayout from './Appnew.vue'
+import NewLayout from './AppNew.vue'
 
 export default {
   components: {
