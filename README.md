@@ -52,6 +52,14 @@ docker run -d \
   sparklight233/price-query:v2.0
 ```
 
+```
+services:
+  price-query:
+    ports:
+      - 8000:8000
+    container_name: price-query
+    image: sparklight233/price-query:lateset
+```
 ## 自定义数据来源
 
 
