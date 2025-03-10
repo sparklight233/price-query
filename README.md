@@ -43,13 +43,13 @@
 
 ```bash
 # 拉取镜像
-docker pull sparklight233/price-query:latest
+docker pull sparklight233/price-query:v1.0
 
 # 运行容器
 docker run -d \
   --name price-query \
   -p 8000:8000 \
-  sparklight233/price-query:latest
+  sparklight233/price-query:v1.0
 ```
 
 ## 自定义数据来源
@@ -156,14 +156,14 @@ mkdir -p /path/to/your/data
 ### 3. 运行容器
 ```
 # 拉取镜像
-docker pull sparklight233/price-query:latest
+docker pull sparklight233/price-query:v1.0
 
 # 运行容器
 docker run -d \
   --name price-query \
   -p 8000:8000 \
   -v /data/price-query:/app/data \
-  sparklight233/price-query:latest
+  sparklight233/price-query:v1.0
 ```
 
 
@@ -175,5 +175,5 @@ docker run -d \
 
 ```
 git clone https://github.com/lyxcnzj/price-query
-docker build -t sparklight233/price-query:latest .
+docker build -t sparklight233/price-query:v1.0 .
 ```
