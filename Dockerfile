@@ -6,10 +6,19 @@ WORKDIR /app
 # 安装必要的依赖
 RUN apt-get update && apt-get install -y \
     curl \
+    nodejs \
+    npm \
     && rm -rf /var/lib/apt/lists/*
 
 # 复制项目文件
 COPY . .
+
+# 前端构建
+WORKDIR /app/frontend
+RUN npm install && npm run build
+
+# 返回主工作目录
+WORKDIR /app
 
 # 安装Python依赖
 RUN pip3 install --no-cache-dir -r backend/requirements.txt \
