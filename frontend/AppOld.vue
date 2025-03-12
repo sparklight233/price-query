@@ -14,13 +14,12 @@
             ></el-input>
           </div>
           
-          <!-- 出售价格 -->
           <div class="search-item price-search">
             <span class="label">出售价格(￥)</span>
             <div class="price-filter">
-              <el-input-number v-model="minPrice" placeholder="低" :min="0" controls-position="right" size="default" :controls="false"></el-input-number>
+              <el-input-number v-model="minPrice" placeholder="最低" :min="0" controls-position="right" size="default" :controls="false"></el-input-number>
               <span class="price-separator">至</span>
-              <el-input-number v-model="maxPrice" placeholder="高" :min="0" controls-position="right" size="default" :controls="false"></el-input-number>
+              <el-input-number v-model="maxPrice" placeholder="最高" :min="0" controls-position="right" size="default" :controls="false"></el-input-number>
             </div>
           </div>
           
@@ -28,9 +27,9 @@
           <div class="search-item time-search">
             <span class="label">账号时间(天)</span>
             <div class="time-filter">
-              <el-input-number v-model="minTime" placeholder="低" :min="0" controls-position="right" size="default" :controls="false"></el-input-number>
+              <el-input-number v-model="minTime" placeholder="最短时间" :min="0" controls-position="right" size="default" :controls="false"></el-input-number>
               <span class="time-separator">至</span>
-              <el-input-number v-model="maxTime" placeholder="高" :min="0" controls-position="right" size="default" :controls="false"></el-input-number>
+              <el-input-number v-model="maxTime" placeholder="最长时间" :min="0" controls-position="right" size="default" :controls="false"></el-input-number>
             </div>
           </div>
           
@@ -85,11 +84,12 @@
         stripe
         highlight-current-row
         empty-text="没有找到匹配的记录"
+        @sort-change="onSortChange"
       >
-        <el-table-column prop="地区" label="地区" sortable @sort-change="onSortChange"></el-table-column>
-        <el-table-column prop="价格" label="价格(￥)" sortable @sort-change="onSortChange"></el-table-column>
-        <el-table-column prop="账号时间" label="账号时间(天)" sortable @sort-change="onSortChange"></el-table-column>
-        <el-table-column prop="出售日期" label="出售日期" sortable @sort-change="onSortChange"></el-table-column>
+        <el-table-column prop="地区" label="地区" sortable></el-table-column>
+        <el-table-column prop="价格" label="价格(￥)" sortable></el-table-column>
+        <el-table-column prop="账号时间" label="账号时间(天)" sortable></el-table-column>
+        <el-table-column prop="出售日期" label="出售日期" sortable></el-table-column>
         <el-table-column prop="备注" label="备注"></el-table-column>
       </el-table>
       
@@ -124,8 +124,8 @@ export default {
       searchInput: '',
       minPrice: '',
       maxPrice: '',
-      minTime: '',  // 添加最小账号时间
-      maxTime: '',  // 添加最大账号时间
+      minTime: '',
+      maxTime: '',
       dateRange: [],
       startDateValue: '',
       endDateValue: '',
@@ -191,13 +191,39 @@ export default {
         this.sortData();
       }
     },
-    // 删除这两个重复的方法
+    sortData() {
+      const getCompareValue = (item, column) => {
+        if (column === '出售日期') {
+          return new Date(item[column]);
+        } else if (column === '价格' || column === '账号时间') {
+          return Number(item[column]);
+        } else {
+          return String(item[column]).toLowerCase();
+        }
+      };
+      
+      this.filteredData.sort((a, b) => {
+        const aValue = getCompareValue(a, this.currentSort.column);
+        const bValue = getCompareValue(b, this.currentSort.column);
+        
+        let compareResult;
+        if (this.currentSort.column === '出售日期') {
+          compareResult = aValue - bValue;
+        } else if (this.currentSort.column === '价格' || this.currentSort.column === '账号时间') {
+          compareResult = aValue - bValue;
+        } else {
+          compareResult = aValue.localeCompare(bValue);
+        }
+        return this.currentSort.ascending ? compareResult : -compareResult;
+      });
+      this.currentPage = 1;
+    },
     resetFilters() {
       this.searchInput = '';
       this.minPrice = '';
       this.maxPrice = '';
-      this.minTime = '';  // 重置最小账号时间
-      this.maxTime = '';  // 重置最大账号时间
+      this.minTime = '';
+      this.maxTime = '';
       this.initializeDateInputs();
       
       this.filteredData = [...this.allData];
@@ -216,7 +242,6 @@ export default {
         const price = Number(item.价格);
         const matchesPrice = price >= minPrice && price <= maxPrice;
         
-        // 添加账号时间筛选
         const time = Number(item.账号时间);
         const matchesTime = time >= minTime && time <= maxTime;
         
@@ -240,7 +265,7 @@ export default {
     },
     handleSizeChange(val) {
       this.itemsPerPage = val;
-      this.currentPage = 1; // 重置到第一页
+      this.currentPage = 1;
     }
   },
   mounted() {
@@ -309,8 +334,8 @@ body {
 
 .keyword-search {
   flex: 0.6;
-  min-width: 100px;  /* 减小最小宽度 */
-  max-width: 130px;  /* 减小最大宽度 */
+  min-width: 100px;
+  max-width: 130px;
 }
 
 .price-search {
@@ -334,27 +359,23 @@ body {
   min-width: 260px;
 }
 
-/* 修改输入框的宽度 */
 .keyword-input {
   width: 100%;
-  max-width: 150px;  /* 减小最大宽度 */
+  max-width: 150px;
 }
 
-/* 修改价格输入框的宽度 */
 .small-input-number {
-  width: 90px !important;  /* 减小宽度 */
+  width: 90px !important;
 }
 
-/* 修改日期选择器的宽度 */
 .single-date-picker {
-  width: 120px !important;  /* 减小宽度 */
+  width: 120px !important;
 }
 
-/* 确保价格和日期区域的对齐 */
 .price-filter, .date-range-container {
   display: flex;
   align-items: center;
-  justify-content: flex-start;  /* 左对齐内容 */
+  justify-content: flex-start;
   width: 100%;
 }
 
@@ -384,14 +405,12 @@ body {
   justify-content: center;
 }
 
-/* 增大表格标题字体 */
 .el-table th {
   background-color: #f5f7fa !important;
   font-size: 16px !important;
   font-weight: bold !important;
 }
 
-/* 可以选择性地增大表格内容字体 */
 .el-table td {
   font-size: 14px !important;
 }
@@ -437,19 +456,19 @@ body {
 
 .price-search {
   flex: 1.2;
-  min-width: 200px;  /* 增加最小宽度 */
-  max-width: 300px;  /* 增加最大宽度 */
+  min-width: 200px;
+  max-width: 300px;
 }
 
 .time-search {
   flex: 1.2;
-  min-width: 300px;  /* 增加最小宽度 */
-  max-width: 350px;  /* 增加最大宽度 */
+  min-width: 300px;
+  max-width: 350px;
 }
 
 .date-search {
   flex: 1.8;
-  min-width: 400px;  /* 增加最小宽度 */
+  min-width: 400px;
 }
 
 .el-input-number {
