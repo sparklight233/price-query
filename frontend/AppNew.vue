@@ -1,7 +1,6 @@
 <template>
   <div class="container">
     <div class="main-content">
-      <!-- 左侧筛选面板 -->
       <el-card class="filter-panel">
         <template #header>
           <div class="filter-header">
@@ -35,9 +34,9 @@
             <div class="filter-item">
               <span class="label">出售价格(￥)</span>
               <div class="price-filter">
-                <el-input-number v-model="minPrice" placeholder="低" :min="0" controls-position="right" size="default" :controls="false" class="small-input-number"></el-input-number>
+                <el-input-number v-model="minPrice" placeholder="最低价格" :min="0" controls-position="right" size="default" :controls="false" class="small-input-number"></el-input-number>
                 <span class="price-separator">至</span>
-                <el-input-number v-model="maxPrice" placeholder="高" :min="0" controls-position="right" size="default" :controls="false" class="small-input-number"></el-input-number>
+                <el-input-number v-model="maxPrice" placeholder="最高价格" :min="0" controls-position="right" size="default" :controls="false" class="small-input-number"></el-input-number>
               </div>
             </div>
           </div>
@@ -46,9 +45,9 @@
             <div class="filter-item">
               <span class="label">账号时间(天)</span>
               <div class="price-filter">
-                <el-input-number v-model="minTime" placeholder="低" :min="0" controls-position="right" size="default" :controls="false" class="small-input-number"></el-input-number>
+                <el-input-number v-model="minTime" placeholder="最短时间" :min="0" controls-position="right" size="default" :controls="false" class="small-input-number"></el-input-number>
                 <span class="price-separator">至</span>
-                <el-input-number v-model="maxTime" placeholder="高" :min="0" controls-position="right" size="default" :controls="false" class="small-input-number"></el-input-number>
+                <el-input-number v-model="maxTime" placeholder="最长时间" :min="0" controls-position="right" size="default" :controls="false" class="small-input-number"></el-input-number>
               </div>
             </div>
           </div>
@@ -81,7 +80,6 @@
           </div>
         </div>
         
-        <!-- 关于区域 -->
         <div class="about-section">
           <el-divider></el-divider>
           <div class="social-links">
@@ -117,7 +115,6 @@
 
       </el-card>
 
-      <!-- 右侧结果显示 -->
       <el-card class="results-panel">
         <template #header>
           <div class="results-header">
@@ -134,11 +131,12 @@
           highlight-current-row
           empty-text="没有找到匹配的记录"
           :max-height="tableHeight"
+          @sort-change="onSortChange"
         >
-          <el-table-column prop="地区" label="地区" sortable @sort-change="onSortChange" show-overflow-tooltip min-width="200"></el-table-column>
-          <el-table-column prop="价格" label="价格(￥)" sortable @sort-change="onSortChange" min-width="120"></el-table-column>
-          <el-table-column prop="账号时间" label="账号时间(天)" sortable @sort-change="onSortChange" min-width="150"></el-table-column>
-          <el-table-column prop="出售日期" label="出售日期" sortable @sort-change="onSortChange" min-width="150"></el-table-column>
+          <el-table-column prop="地区" label="地区" sortable show-overflow-tooltip min-width="200"></el-table-column>
+          <el-table-column prop="价格" label="价格(￥)" sortable min-width="120"></el-table-column>
+          <el-table-column prop="账号时间" label="账号时间(天)" sortable min-width="150"></el-table-column>
+          <el-table-column prop="出售日期" label="出售日期" sortable min-width="150"></el-table-column>
           <el-table-column prop="备注" label="备注" show-overflow-tooltip min-width="250"></el-table-column>
         </el-table>
         
@@ -282,23 +280,39 @@ export default {
       this.sortData();
     },
     sortData() {
-      this.filteredData.sort((a, b) => {
-        let compareResult;
-        if (this.currentSort.column === '出售日期') {
-          compareResult = new Date(a[this.currentSort.column]) - new Date(b[this.currentSort.column]);
-        } else if (this.currentSort.column === '价格' || this.currentSort.column === '账号时间') {
-          compareResult = Number(a[this.currentSort.column]) - Number(b[this.currentSort.column]);
-        } else {
-          compareResult = String(a[this.currentSort.column]).localeCompare(String(b[this.currentSort.column]));
-        }
-        return this.currentSort.ascending ? compareResult : -compareResult;
-      });
+    const getCompareValue = (item, column) => {
+    if (column === '出售日期') {
+    return new Date(item[column]);
+    } else if (column === '价格' || column === '账号时间') {
+    return Number(item[column]);
+    } else {
+    return String(item[column]).toLowerCase();
+    }
+    };
+    this.filteredData.sort((a, b) => {
+    const aValue = getCompareValue(a, this.currentSort.column);
+    const bValue = getCompareValue(b, this.currentSort.column);
+    
+    let compareResult;
+    if (this.currentSort.column === '出售日期') {
+    compareResult = aValue - bValue;
+    } else if (this.currentSort.column === '价格' || this.currentSort.column === '账号时间') {
+    compareResult = aValue - bValue;
+    } else {
+    compareResult = aValue.localeCompare(bValue);
+    }
+    return this.currentSort.ascending ? compareResult : -compareResult;
+    });
+    this.currentPage = 1;
     },
-    onSortChange({ prop, order }) {
+    onSortChange({ column, prop, order }) {
       if (prop) {
         this.currentSort.column = prop;
         this.currentSort.ascending = order === 'ascending';
         this.sortData();
+        
+        console.log('排序:', prop, order);
+        console.log('数据条数:', this.filteredData.length);
       }
     },
     handleCurrentChange(val) {
@@ -395,7 +409,7 @@ body {
 }
 
 .keyword-input {
-  width: 120px; /* 使用固定宽度 */
+  width: 120px;
 }
 
 .search-row {
