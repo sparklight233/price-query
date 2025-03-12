@@ -171,7 +171,7 @@ docker pull sparklight233/price-query:v2.0
 docker run -d \
   --name price-query \
   -p 8000:8000 \
-  -v /root/data/price-query:/app/frontend/data \
+  -v /root/data/price-query:/app/backend/data \
   sparklight233/price-query:v2.0
 ```
 
