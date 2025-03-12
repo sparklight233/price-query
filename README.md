@@ -155,10 +155,11 @@ multi_html_to_excel(
 ```
 
 ### 2. 上传数据文件
-上传数据文件到/path/to/your/data，文件为之前获取的excel文件
+上传数据文件到/root/data/price-query，文件为之前获取的excel文件
+注意只会读取排在最前面的xlsx文件，您可以使用字母顺序靠前的文件名（如 0_data.xlsx 或 a_data.xlsx ）或者只保留一个Excel文件在目录中
 
 ```
-mkdir -p /path/to/your/data
+mkdir -p /root/data/price-query
 ```
 
 ### 3. 运行容器
@@ -170,7 +171,7 @@ docker pull sparklight233/price-query:v2.0
 docker run -d \
   --name price-query \
   -p 8000:8000 \
-  -v /data/price-query:/app/data/frontend/data \
+  -v /root/data/price-query:/app/frontend/data \
   sparklight233/price-query:v2.0
 ```
 
@@ -185,21 +186,7 @@ docker run -d \
 # 拉取源码
 git clone https://github.com/sparklight233/price-query.git
 
-# 安装Node.js and npm
-curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
-apt-get install -y nodejs
-
-# 确认安装
-node -v
-npm -v
-
-# 构建前端
-cd ~/project/price-query/frontend
-npm install
-npm run build
-
 # 构建docker
-cd ..
 docker build -t sparklight233/price-query:v2.0 .
 docker push sparklight233/price-query:v2.0
 ```
